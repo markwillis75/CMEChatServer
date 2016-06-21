@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Chat" default="junit" basedir=".">
+  <property name="src"   location="src"/>
+  <property name="test"  location="tests"/>
+  <property name="build" location="build/classes"/>
+  <property name="lib"   location="lib"/>  
+  
+	<!-- compilation classpath -->
+  <path id="compile.classpath">
+    <fileset dir="${lib}">
+      <include name="**/*.jar"/>
+    </fileset>
+  </path> 
+  
+  <target name="init">
+    <tstamp/>
+    <mkdir dir="${build}"/>
+  </target>
+  
+  
+  <!-- Compile the src and test classes -->
+  <target name="compile" depends="init">
+  	<delete dir="${build}"/>
+  	<mkdir dir="${build}"/>
+    <javac destdir="${build}"
+           includeJavaRuntime="no"
+           includeAntRuntime="no"
+    	   debug="yes">
+      <classpath refid="compile.classpath"/>
+      <src path="${src}"/>
+      <src path="${test}"/>
+    </javac>
+    <copy todir="${build}">
+      <fileset dir="${src}" includes="**/*.xml,**/*.properties"/>
+    </copy>
+  </target>
+  
+  <!-- Execute the unit tests -->
+  <target name="junit" depends="compile">
+    <junit printsummary="yes" haltonerror="yes" haltonfailure="yes">       
+      <formatter type="plain" usefile="false"/>
+      <classpath>
+        <pathelement location="${build}"/>
+        <path refid="compile.classpath"/>
+      </classpath>
+      <batchtest fork="yes">
+        <fileset dir="${test}">
+        	<exclude name="**/Mock*"/>
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+  
+</project>
